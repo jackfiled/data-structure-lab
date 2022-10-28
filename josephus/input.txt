@@ -1,0 +1,8 @@
+6
+1 zyl male 1
+2 zzyl male 2
+3 zzzyl female 3
+4 zyyl female 4
+5 zyyyl female 40
+6 zyll female 45
+0 4 1
