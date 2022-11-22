@@ -23,11 +23,34 @@ TreeInFileP GetInFileTrees(HuffmanNodeP root) {
 
 int CreateInFileTreeNode(HuffmanNodeP node, TreeInFileT trees[], int pos)
 {
-    if (node == nullptr || node->weight == 0)
+    if (node->weight == 0)
     {
+        // 不创建权值为0的节点
         return pos;
     }
+    else
+    {
+        trees[pos].data = node->data;
 
-    trees[pos].data = node->data;
+        if (node->lChild != nullptr)
+        {
+            trees[pos].lIndex = pos + 1;
+            pos = CreateInFileTreeNode(node->lChild, trees, pos + 1);
+        }
+        else
+        {
+            trees[pos].lIndex = -1;
+        }
+        if (node->rChild != nullptr)
+        {
+            trees[pos].rIndex = pos + 1;
+            pos = CreateInFileTreeNode(node->rChild, trees, pos + 1);
+        }
+        else
+        {
+            trees[pos].rIndex = -1;
+        }
 
+        return pos + 1;
+    }
 }
