@@ -4,11 +4,23 @@
 #include "tree.h"
 #include "cstdlib"
 #include "const.h"
-#include "cstdio"
+
+void InitHuffmanCodeArray(HuffmanCodeP codeArray, int length)
+{
+    for (int i = 0; i < length; i++)
+    {
+        HuffmanCodeT code = codeArray[i];
+        code.pos = 0;
+        for (int j = 0; j < CODE_LENGTH; j++)
+        {
+            code.code[j] = 0;
+        }
+    }
+}
 
 HuffmanNodeP CreateHuffmanNode(unsigned int weight, char data)
 {
-    HuffmanNodeP node = (HuffmanNodeP ) malloc(sizeof(HuffmanNodeT));
+    auto node = (HuffmanNodeP ) malloc(sizeof(HuffmanNodeT));
 
     if (node == nullptr)
     {
@@ -20,6 +32,8 @@ HuffmanNodeP CreateHuffmanNode(unsigned int weight, char data)
     node->parent = nullptr;
     node->lChild = nullptr;
     node->rChild = nullptr;
+
+    node->code.pos = 0;
 
     return node;
 }
@@ -48,6 +62,8 @@ HuffmanNodeP CreateHuffmanTree(HuffmanNodeP forests[])
         root = CreateHuffmanNode(forests[i]->weight + forests[i + 1]->weight, -1);
         root->lChild = forests[i];
         root->rChild = forests[i + 1];
+        root->lChild->parent = root;
+        root->rChild->parent = root;
 
         forests[i + 1] = root;
     }
@@ -90,35 +106,55 @@ void SortHuffmanForest(HuffmanNodeP forests[], int left, int right) {
     }
 }
 
-void GetZipDict(HuffmanNodeP root, char *zipDict, int buffer)
+void GetHuffmanCode(HuffmanNodeP node, bool isLeft)
 {
-    if (root == nullptr || root->weight == 0)
+    // 当递归到头时
+    // 停止遍历
+    if (node == nullptr)
     {
-        // root为空指针或者权值为0
-        // 停止递归
         return;
     }
 
-    if (root->data != -1)
+    // 首先复制父节点的编码
+    for(int i = 0; i < node->parent->code.pos; i++)
     {
-        // 节点为叶子节点
-        zipDict[root->data] = buffer;
+        node->code.code[i] = node->parent->code.code[i];
     }
+    // 然后复制父节点目前编码的位置
+    node->code.pos = node->parent->code.pos;
 
-    GetZipDict(root->lChild, zipDict, (buffer << 1) + 0);
-    GetZipDict(root->rChild, zipDict, (buffer << 1) + 1);
+    if(isLeft)
+    {
+        node->code.code[node->code.pos] = 0;
+    }
+    else
+    {
+        node->code.code[node->code.pos] = 1;
+    }
+    node->code.pos++;
+
+    GetHuffmanCode(node->lChild, true);
+    GetHuffmanCode(node->rChild, false);
 }
 
-void IterHuffmanTree(HuffmanNodeP root)
+void IterHuffmanTree(HuffmanNodeP root, HuffmanCodeT zipDict[])
 {
     if (root == nullptr || root->weight == 0)
     {
         return;
     }
 
-    printf("%d-%d\n", root->data, root->weight);
-    IterHuffmanTree(root->lChild);
-    IterHuffmanTree(root->rChild);
+    if(root->data != -1)
+    {
+        zipDict[root->data].pos = root->code.pos;
+        for (int i = 0; i < root->code.pos; i++)
+        {
+            zipDict[root->data].code[i] = root->code.code[i];
+        }
+    }
+
+    IterHuffmanTree(root->lChild, zipDict);
+    IterHuffmanTree(root->rChild, zipDict);
 }
 
 int GetHuffmanTreeNotZeroNodeNumber(HuffmanNodeP root)

@@ -4,6 +4,31 @@
 
 #ifndef ZIP_SEARCH_TREE_H
 #define ZIP_SEARCH_TREE_H
+#include "const.h"
+
+struct HuffmanCode
+{
+    /**
+     * 具体的编码的内容
+     */
+    char code[CODE_LENGTH];
+    /**
+     * 已经使用的长度
+     */
+    char pos;
+};
+
+typedef struct HuffmanCode HuffmanCodeT;
+typedef struct HuffmanCode* HuffmanCodeP;
+
+/**
+ * 初始化一个哈夫曼编码数组
+ * 内存中可能不是所有的数都为0
+ * @param codeArray 数组指针
+ * @param length 数组长度
+ */
+void InitHuffmanCodeArray(HuffmanCodeP codeArray, int length);
+
 
 struct HuffmanNode
 {
@@ -27,6 +52,11 @@ struct HuffmanNode
      * 右子节点指针
      */
     struct HuffmanNode* rChild;
+
+    /**
+     * 哈夫曼编码
+     */
+    HuffmanCodeT code;
 };
 
 typedef struct HuffmanNode HuffmanNodeT;
@@ -65,18 +95,19 @@ HuffmanNodeP CreateHuffmanTree(HuffmanNodeP forests[]);
 void SortHuffmanForest(HuffmanNodeP forests[], int left, int right);
 
 /**
- * 通过哈夫曼树获得压缩密码字典
- * @param root 哈夫曼树根节点
- * @param zipDict 压缩字典数组
- * @param buffer 缓冲区
+ * 遍历树得到每个节点的哈夫曼编码
+ * 递归实现
+ * @param node 节点
+ * @param isLeft 是否为左子树
  */
-void GetZipDict(HuffmanNodeP root, char *zipDict, int buffer);
+void GetHuffmanCode(HuffmanNodeP node, bool isLeft);
 
 /**
- * 遍历打印哈夫曼树结构
- * @param root
+ * 遍历哈夫曼树 获得压缩字典
+ * @param root 哈夫曼树节点
+ * @param zipDict 压缩字典
  */
-void IterHuffmanTree(HuffmanNodeP root);
+void IterHuffmanTree(HuffmanNodeP root, HuffmanCodeT zipDict[]);
 
 /**
  * 获得哈夫曼树中权值非0节点的数量

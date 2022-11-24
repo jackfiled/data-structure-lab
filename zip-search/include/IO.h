@@ -10,7 +10,9 @@
 
 void ReadFileFrequency(const std::string& filename, int frequencyArray[]);
 
-void WriteZipFile(const std::string &filename, const std::string &outputName, char ZipDict[]);
+void WriteZipFile(const std::string &inputFileName, const std::string &outputFileName);
+
+void WriteUnzipFile(const std::string& inputFileName, const std::string& outputFileName);
 
 HuffmanNodeP * GetHuffmanForests(int frequencyArray[]);
 

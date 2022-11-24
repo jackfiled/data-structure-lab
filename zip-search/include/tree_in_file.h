@@ -30,6 +30,14 @@ typedef struct TreeInFile* TreeInFileP;
  */
 TreeInFileP GetInFileTrees(HuffmanNodeP root);
 
+/**
+ * 创建文件哈夫曼列表中的每个节点
+ * 递归实现
+ * @param node 原始哈夫曼树中的节点
+ * @param trees 存储创建出来的哈夫曼树的数组
+ * @param pos 当前创建节点的数组位置
+ * @return 当前创建节点的数组位置
+ */
 int CreateInFileTreeNode(HuffmanNodeP node, TreeInFileT trees[], int pos);
 
 #endif //ZIP_SEARCH_TREE_IN_FILE_H
