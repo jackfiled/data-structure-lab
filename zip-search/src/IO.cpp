@@ -7,10 +7,17 @@
 #include "logging.h"
 #include "metadata.h"
 #include "tree_in_file.h"
+#include "unistd.h"
+#include "sys/stat.h"
 
 void ReadFileFrequency(const std::string& filename, int frequencyArray[])
 {
     FILE *file = fopen(filename.c_str(), "r");
+    if (file == nullptr)
+    {
+        LoggingError(filename + "is not a valid file name!");
+        exit(0);
+    }
 
     while (true)
     {
@@ -59,7 +66,17 @@ HuffmanNodeP * GetHuffmanForests(int frequencyArray[])
 void WriteZipFile(const std::string &inputFileName, const std::string &outputFileName)
 {
     FILE *readFile = fopen(inputFileName.c_str(), "r");
+    if (readFile == nullptr)
+    {
+        LoggingError(inputFileName + "is not a valid file name!");
+        exit(0);
+    }
     FILE *outputFile = fopen(outputFileName.c_str(), "wb");
+    if (outputFile == nullptr)
+    {
+        LoggingError(outputFileName + "is not a valid file name!");
+        exit(0);
+    }
 
     // 建立压缩哈夫曼树
     int frequencyArray[ASCII_LENGTH] = {0};
@@ -154,7 +171,17 @@ void WriteZipFile(const std::string &inputFileName, const std::string &outputFil
 void WriteUnzipFile(const std::string& inputFileName, const std::string& outputFileName)
 {
     FILE* inputFile = fopen(inputFileName.c_str(), "rb");
+    if (inputFile == nullptr)
+    {
+        LoggingError(inputFileName + "is not a valid file name!");
+        exit(0);
+    }
     FILE* outputFile = fopen(outputFileName.c_str(), "w");
+    if (outputFile == nullptr)
+    {
+        LoggingError(outputFileName + "is not a valid file name!");
+        exit(0);
+    }
 
     // 读取元信息
     MetaDataT metaDataT;
@@ -225,4 +252,26 @@ void WriteUnzipFile(const std::string& inputFileName, const std::string& outputF
     // 关闭文件
     fclose(inputFile);
     fclose(outputFile);
+}
+
+void PrintHelpMessage()
+{
+    printf("Usage: \n");
+    printf("Zip File: -z [In-File-Name] [Out-File-Name]\n");
+    printf("Unzip File: -u [In-File-Name] [Out-File-Name]\n");
+    printf("Print Help Message: -h\n");
+}
+
+double CalculateZipRate(const std::string& originFileName, const std::string& zipFileName)
+{
+    struct stat originFileStat{};
+    struct stat zipFileStat{};
+
+    stat(originFileName.c_str(), &originFileStat);
+    stat(zipFileName.c_str(), &zipFileStat);
+
+    auto originFileSize = (double )originFileStat.st_size;
+    auto zipFileSize = (double )zipFileStat.st_size;
+
+    return zipFileSize / originFileSize;
 }

@@ -16,4 +16,8 @@ void WriteUnzipFile(const std::string& inputFileName, const std::string& outputF
 
 HuffmanNodeP * GetHuffmanForests(int frequencyArray[]);
 
+void PrintHelpMessage();
+
+double CalculateZipRate(const std::string& originFileName, const std::string& zipFileName);
+
 #endif //ZIP_SEARCH_IO_H
