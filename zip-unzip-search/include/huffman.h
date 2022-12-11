@@ -51,7 +51,18 @@ public:
      */
     int root = -1;
 
-    explicit HuffmanCode(int * frequencyArray);
+    /**
+     * 从字符的频率数组出发创建
+     * @param frequencyArray
+     */
+    explicit HuffmanCode(const int * frequencyArray);
+
+    /**
+     * 从哈夫曼数组节点出发创建
+     * @param nodeArray 哈夫曼节点数组
+     * @param length 节点数组的长度
+     */
+    HuffmanCode(HuffmanNode *nodeArray, int length);
 
     ~HuffmanCode();
 

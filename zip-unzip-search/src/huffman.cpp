@@ -5,7 +5,7 @@
 #include "const.h"
 #include "cstdio"
 
-HuffmanCode::HuffmanCode(int *frequencyArray)
+HuffmanCode::HuffmanCode(const int *frequencyArray)
 {
     for (int i = 0; i < ASCII_LENGTH; i++)
     {
@@ -18,6 +18,13 @@ HuffmanCode::HuffmanCode(int *frequencyArray)
 
         nodes->push_back(node);
     }
+}
+
+HuffmanCode::HuffmanCode(HuffmanNode *nodeArray, int length)
+{
+    delete nodes;
+
+    nodes = new std::vector<HuffmanNode>(nodeArray, nodeArray + length);
 }
 
 HuffmanCode::~HuffmanCode()
