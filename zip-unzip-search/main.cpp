@@ -1,6 +1,7 @@
 #include "file_io.h"
 #include "logging.h"
 #include "cstring"
+#include "search.h"
 
 /**
  * 输出帮助信息
@@ -10,6 +11,7 @@ void PrintHelpMessage()
     printf("Usage: \n");
     printf("Zip File: -z [In-File-Name] [Out-File-Name]\n");
     printf("Unzip File: -u [In-File-Name] [Out-File-Name]\n");
+    printf("Search In Zip File: -s [Zip-File-Name] [Sample-String]\n");
     printf("Print Help Message: -h\n");
 }
 
@@ -39,6 +41,12 @@ int main(int argc, char *argv[])
 
             Logging::LoggingInfo("Unzip Success!");
         }
+        else if(strcmp(argv[1], "-s") == 0)
+        {
+            Logging::LoggingInfo("Start to search in file " + inputFileName);
+            SearchInFile(argv[2], argv[3]);
+            Logging::LoggingInfo("Search finished");
+        }
         else
         {
             printf("Unknown Usage!\n");
@@ -54,7 +62,6 @@ int main(int argc, char *argv[])
         printf("Unknown Usage!\n");
         PrintHelpMessage();
     }
-
 
     return 0;
 }

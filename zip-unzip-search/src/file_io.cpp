@@ -244,3 +244,64 @@ double FileIO::CalculateZipRate(const std::string &inputFileName, const std::str
 
     return zipFileSize / originFileSize;
 }
+
+BinaryBuffer::BinaryBuffer(std::string &inputFileName)
+{
+    file = fopen(inputFileName.c_str(), "rb");
+
+    if (file == nullptr)
+    {
+        // 读取文件失败
+        Logging::LoggingError(inputFileName + " is not a valid file name.");
+        exit(0);
+    }
+
+    buffer = 0;
+    bufferPos = 0;
+    readFinishedFlag = false;
+
+    // 读取文件开头的元信息和哈夫曼数组
+    MetaData metaData{};
+    fread(&metaData, sizeof(MetaData), 1, file);
+    position = position + (int )sizeof(MetaData) * 8;
+
+    // 读取哈夫曼节点数组
+    HuffmanNode nodes[metaData.HuffmanNodeLength];
+    fread(nodes, sizeof(HuffmanNode), metaData.HuffmanNodeLength, file);
+    position = position + (int )sizeof(HuffmanNode) * metaData.HuffmanNodeLength * 8;
+}
+
+BinaryBuffer::~BinaryBuffer()
+{
+    fclose(file);
+    file = nullptr;
+}
+
+char BinaryBuffer::read()
+{
+    if (readFinishedFlag)
+    {
+        return -1;
+    }
+
+    if (bufferPos == 0)
+    {
+        // 当前缓冲区读取结束
+        int result = (int )fread(&buffer, sizeof(int), 1, file);
+
+        if (result == 0)
+        {
+            readFinishedFlag = true;
+            // 文件读取结束
+            return -1;
+        }
+
+        bufferPos = 32;
+    }
+
+    int result = (buffer >> 31) & 1;
+    buffer = buffer << 1;
+    bufferPos--;
+    position++;
+    return (char )result;
+}

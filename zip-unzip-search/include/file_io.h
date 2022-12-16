@@ -58,4 +58,25 @@ public:
     static double CalculateZipRate(const std::string& inputFileName, const std::string& outputFileName);
 };
 
+class BinaryBuffer
+{
+public:
+    explicit BinaryBuffer(std::string& inputFileName);
+
+    ~BinaryBuffer();
+
+    char read();
+
+    int position = 0;
+
+private:
+    FILE* file = nullptr;
+
+    int buffer;
+    int bufferPos;
+    bool readFinishedFlag;
+
+
+};
+
 #endif //ZIP_UNZIP_SEARCH_FILE_IO_H
